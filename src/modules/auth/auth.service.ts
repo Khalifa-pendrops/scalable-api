@@ -2,12 +2,12 @@
 
 import { User } from "../../domain/user.entity";
 import { AuthRepo } from "./auth.repository";
-import { PersistedUser } from "./auth.types";
+
 
 export class AuthService {
   constructor(private repo = new AuthRepo()) {}
 
-  async register(email: string, username: string, password: string): Promise<PersistedUser> {
+  async register(email: string, username: string, password: string) {
     const existing =
       (await this.repo.findByEmail(email)) ||
       (await this.repo.findByEmail(username));
@@ -18,10 +18,8 @@ export class AuthService {
       );
     }
 
-    const user = new User({ email, username, password });
+    const user = await User.create({ email, username, password });
 
-    await user.hashPassword();
-
-    return this.repo.create(user.values);
+    return this.repo.create(user.persistence);
   }
 }

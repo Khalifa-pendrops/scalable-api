@@ -12,7 +12,7 @@ const UserSchema = new Schema(
   { timestamps: true }
 );
 
-type UserSchemaType = InferSchemaType<typeof UserSchema>;
+type UserSchemaType = InferSchemaType<typeof UserSchema>; 
 
 export type UserDocument = UserSchemaType & {
   _id: Types.ObjectId;
