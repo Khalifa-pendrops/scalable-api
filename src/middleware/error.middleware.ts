@@ -1,12 +1,7 @@
-import { Request, Response, Nextfunction } from "express";
+import { Request, Response, NextFunction } from "express";
 
-export const errorMiddleware = (
-  err: any,
-  req: Request,
-  res: Response,
-  next: Nextfunction
-) => {
-  const status = err.statusCode || 5000;
+export const errorMiddleware = (err: any, req: any, res: any, next: any) => {
+  const status = err.statusCode || 4000;
 
   res.status(status).json({
     success: false,
