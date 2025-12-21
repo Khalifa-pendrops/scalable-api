@@ -4,7 +4,6 @@
 
 import bcrypt from "bcrypt";
 
-
 interface CreateUserParams {
   email: string;
   username: string;
@@ -12,7 +11,7 @@ interface CreateUserParams {
 }
 
 export interface UserProps {
-  // id?: string;
+  id?: string;
   email: string;
   username: string;
   passwordHash: string;
@@ -31,7 +30,9 @@ export class User {
       throw new Error("This username is too short. Add some more letter.");
     }
     if (!params.password || params.password.length < 8) {
-      throw new Error("Hey! This password is too weak. You know what to do.");
+      throw new Error(
+        "Hey! This password is too weak. You know what to do right?"
+      );
     }
 
     const passwordHash = await bcrypt.hash(params.password, 12);
@@ -49,6 +50,22 @@ export class User {
     return bcrypt.compare(plain, this.props.passwordHash);
   }
 
+  get id(): string | undefined {
+    return this.props.id;
+  }
+
+  get email(): string {
+    return this.props.email;
+  }
+
+  get username(): string {
+    return this.props.username;
+  }
+
+  get roles(): string[] {
+    return this.props.roles ?? [];
+  }
+
   get persistence() {
     return {
       email: this.props.email,
@@ -57,5 +74,11 @@ export class User {
       roles: this.props.roles,
       createdAt: this.props.createdAt,
     };
+  }
+
+  // this bypasses validation cause data is trusted DB data
+  // constructor remains private
+  static rehydrate(props: UserProps) {
+    return new User(props);
   }
 }

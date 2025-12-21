@@ -1,21 +1,16 @@
-//DB model
+// DB model
 
-import { Schema, model, InferSchemaType, Types } from "mongoose";
+import { Schema, model } from "mongoose";
+import { UserDocument } from "./auth.types";
 
-const UserSchema = new Schema(
+export const UserSchema = new Schema(
   {
-    email: { type: String, unique: true, index: true },
-    password: { type: String, unique: true, required: true },
-    username: { type: String, unique: true, index: true },
-    roles: { type: [String], default: ["user"] },
+    email: { type: String, required: true, unique: true },
+    username: { type: String, required: true, unique: true },
+    password: { type: String, required: true },
+    roles: { type: [String], required: true },
   },
   { timestamps: true }
 );
 
-type UserSchemaType = InferSchemaType<typeof UserSchema>; 
-
-export type UserDocument = UserSchemaType & {
-  _id: Types.ObjectId;
-};
-
-export const UserModel = model<UserDocument>("User, UserSchema");
+export const UserModel = model<UserDocument>("User", UserSchema);
