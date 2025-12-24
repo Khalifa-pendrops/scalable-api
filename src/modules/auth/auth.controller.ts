@@ -48,4 +48,41 @@ export class AuthController {
       next(e);
     }
   }
+
+  static async refresh(req, res, next) {
+    try {
+      const { refreshToken } = req.body;
+
+      const tokens = await authService.refresh(refreshToken, {
+        ip: req.ip,
+        userAgent: req.headers["user-agent"],
+      });
+
+      res.json({ success: true, data: tokens });
+    } catch (e: any) {
+      next(e);
+    }
+  }
+
+  static async logout(req, res, next) {
+    try {
+      const { refreshToken } = req.body;
+
+      await authService.logout(refreshToken);
+
+      res.json({ success: true });
+    } catch (e: any) {
+      next(e);
+    }
+  }
+
+  static async logoutAll(req, res, next) {
+    try {
+      await authService.logoutAll(req.user.id);
+
+      res.json({ success: true });
+    } catch (e: any) {
+      next(e);
+    }
+  }
 }

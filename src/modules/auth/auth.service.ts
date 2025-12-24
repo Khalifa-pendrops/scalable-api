@@ -5,9 +5,13 @@ import { AuthRepo } from "./auth.repository";
 import { RefreshTokenModel } from "./refreshToken.model";
 import { generateRefreshToken, hashRefreshToken } from "../../utils/token";
 import { signAccessToken } from "../../utils/jwt";
+import { RefreshTokenRepo } from "./auth.refreshToken.repository";
 
 export class AuthService {
-  constructor(private repo = new AuthRepo()) {}
+  constructor(
+    private repo = new AuthRepo(),
+    private refreshTokenRepo = new RefreshTokenRepo()
+  ) {}
 
   async register(params: {
     email: string;
@@ -15,7 +19,6 @@ export class AuthService {
     password: string;
   }) {
     const { email, username } = params;
-
 
     const existing =
       (await this.repo.findByEmail(email)) ||
@@ -64,7 +67,7 @@ export class AuthService {
     }
 
     const accessToken = signAccessToken({
-      sub: user.id!, // domain id
+      sub: user.id!,
       roles: user.roles,
     });
 
@@ -79,5 +82,65 @@ export class AuthService {
     });
 
     return { accessToken, refreshToken };
+  }
+
+  async refresh(
+    refreshToken: string,
+    meta: { ip?: string; userAgent?: string }
+  ) {
+    const tokenHash = hashRefreshToken(refreshToken);
+
+    // Find token (even if revoked) for replay detection
+    const stored = await this.refreshTokenRepo.findByHash(tokenHash);
+
+    // Token never existed
+    if (!stored) {
+      throw new Error("Umm sorry this refresh token is invalid");
+    }
+
+    // If token is revoked => replay detected
+    if (stored.revokedAt || stored.expiresAt < new Date()) {
+      await this.refreshTokenRepo.revokeAllForUser(stored.userId.toString());
+      throw new Error("🚨Security incident detected. Session terminated!");
+    }
+
+    // Revoke old token (rotation)
+    await this.refreshTokenRepo.revoke(stored._id.toString());
+
+    // Issue new access token
+    const accessToken = signAccessToken({
+      sub: stored.userId.toString(),
+      roles: [], // optionally fetch roles from DB
+    });
+
+    // Issue new refresh token and store hash
+    const newRefreshToken = generateRefreshToken();
+
+    await this.refreshTokenRepo.create({
+      userId: stored.userId.toString(),
+      tokenHash: hashRefreshToken(newRefreshToken),
+      expiresAt: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7),
+      ip: meta.ip,
+      userAgent: meta.userAgent,
+    });
+
+    return { accessToken, refreshToken: newRefreshToken };
+  }
+
+  // idempotent - safe to call twice
+  // no info leakage and no access token required
+  async logout(refreshToken: string) {
+    const tokenHash = hashRefreshToken(refreshToken);
+
+    const stored = await this.refreshTokenRepo.findValidByHash(tokenHash);
+
+    if (!stored) {
+      //idempotent logout - already revoked or invalid
+      return;
+    }
+  }
+
+  async logoutAll(userId: string) {
+    await this.refreshTokenRepo.revokeAllForUser(userId);
   }
 }
