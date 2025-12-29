@@ -2,7 +2,7 @@ import { ZodObject } from "zod";
 import { Request, Response, NextFunction } from "express";
 
 export const validate =
-  (schema: ZodObject) => (req: Request, res: Response, next: NextFunction) => { 
+  (schema: ZodObject) => (req: Request, res: Response, next: NextFunction) => {
     try {
       schema.parse(req.body);
     } catch (e: any) {
@@ -11,4 +11,5 @@ export const validate =
         message: e.erros?.[0].message || "This request is invalid",
       });
     }
+    next();
   };

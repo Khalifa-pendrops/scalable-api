@@ -7,6 +7,10 @@ import { requireAuth } from "../../middleware/auth.middleware";
 const router = Router();
 
 router.post("/register", validate(registerSchema), AuthController.register);
+// router.post("/register", (req, res) => {
+//   console.log("RAW HANDLER HIT");
+//   res.json({ ok: true });
+// });
 
 router.post("/login", validate(loginSchema), AuthController.login);
 

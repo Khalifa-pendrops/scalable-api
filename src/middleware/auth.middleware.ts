@@ -29,4 +29,5 @@ export function requireAuth(req: Request, res: Response, next: NextFunction) {
       .status(401)
       .json({ message: " Token might be invalid or expred. Sorry." });
   }
+  next();
 }

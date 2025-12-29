@@ -5,8 +5,11 @@ import { Request, Response, NextFunction } from "express";
 
 const authService = new AuthService();
 
+console.log("🎯 Register Reach!");
+
 export class AuthController {
   static async register(req: Request, res: Response, next: NextFunction) {
+    console.log("🎯 Register hit");
     try {
       const { email, username, password } = req.body;
 
@@ -17,7 +20,7 @@ export class AuthController {
         password,
       });
 
-      res.status(201).json({
+      return res.status(201).json({
         success: true,
         data: {
           id: user.id,
@@ -40,7 +43,7 @@ export class AuthController {
       });
 
       // ❌ res.status(...) instead of res.json(...)
-      res.json({
+      return res.status(201).json({
         success: true,
         data: tokens,
       });
@@ -49,7 +52,7 @@ export class AuthController {
     }
   }
 
-  static async refresh(req, res, next) {
+  static async refresh(req: Request, res: Response, next: NextFunction) {
     try {
       const { refreshToken } = req.body;
 
@@ -58,29 +61,29 @@ export class AuthController {
         userAgent: req.headers["user-agent"],
       });
 
-      res.json({ success: true, data: tokens });
+      return res.status(201).json({ success: true, data: tokens });
     } catch (e: any) {
       next(e);
     }
   }
 
-  static async logout(req, res, next) {
+  static async logout(req: Request, res: Response, next: NextFunction) {
     try {
       const { refreshToken } = req.body;
 
       await authService.logout(refreshToken);
 
-      res.json({ success: true });
+      return res.status(201).json({ success: true });
     } catch (e: any) {
       next(e);
     }
   }
 
-  static async logoutAll(req, res, next) {
+  static async logoutAll(req: Request, res: Response, next: NextFunction) {
     try {
       await authService.logoutAll(req.user.id);
 
-      res.json({ success: true });
+      return res.status(201).json({ success: true });
     } catch (e: any) {
       next(e);
     }
