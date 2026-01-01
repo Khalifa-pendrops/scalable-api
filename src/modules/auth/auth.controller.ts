@@ -81,11 +81,12 @@ export class AuthController {
 
   static async logoutAll(req: Request, res: Response, next: NextFunction) {
     try {
-      await authService.logoutAll(req.user.id);
+      const userId = req.user!.id;
+      await authService.logoutAll(userId);
 
-      return res.status(201).json({ success: true });
+      return res.status(200).json({ success: true });
     } catch (e: any) {
-      next(e);
+      return next(e);
     }
   }
 }

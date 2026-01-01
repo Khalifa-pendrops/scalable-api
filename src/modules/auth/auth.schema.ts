@@ -9,8 +9,8 @@ export const registerSchema = z.object({
 });
 
 export const loginSchema = z.object({
-  identifier: z.string(),
-  password: z.string(),
+  identifier: z.string().min(3, "Sorry, Identifier is required"),
+  password: z.string().min(8, "Pssord is required of course"),
 });
 
 export type RegisterInput = z.infer<typeof registerSchema>;

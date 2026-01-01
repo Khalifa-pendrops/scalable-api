@@ -6,6 +6,7 @@ import { RefreshTokenModel } from "./refreshToken.model";
 import { generateRefreshToken, hashRefreshToken } from "../../utils/token";
 import { signAccessToken } from "../../utils/jwt";
 import { RefreshTokenRepo } from "./auth.refreshToken.repository";
+import { AuthError } from "../../error/auth.error";
 
 export class AuthService {
   constructor(
@@ -95,7 +96,7 @@ export class AuthService {
 
     // Token never existed
     if (!stored) {
-      throw new Error("Umm sorry this refresh token is invalid");
+      throw new AuthError("Umm sorry this refresh token is invalid");
     }
 
     // If token is revoked => replay detected
