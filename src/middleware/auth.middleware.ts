@@ -22,7 +22,11 @@ export function requireAuth(req: Request, res: Response, next: NextFunction) {
     };
 
     // attach user context
-    (req as any).user = payload;
+    // (req as any).user = payload;
+    req.user = {
+      id: payload.sub,
+      roles: payload.roles ?? [],
+    };
 
     return next();
   } catch (err) {

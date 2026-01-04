@@ -12,6 +12,7 @@ export class AuthRepo {
     const doc = await UserModel.findOne({ email });
     return doc
       ? User.rehydrate({
+          id: doc._id.toString(),
           email: doc.email,
           username: doc.username,
           passwordHash: doc.password,
