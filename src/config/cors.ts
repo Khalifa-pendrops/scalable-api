@@ -2,7 +2,7 @@ import cors, { CorsOptions, CorsRequest } from "cors";
 
 const allowedOrigins = (process.env.CORS_ORIGINS || "")
   .split(",")
-  .map((v) => v.trim())
+  .map((v: string) => v.trim())
   .filter(Boolean);
 
 const corsOptions: CorsOptions = {
