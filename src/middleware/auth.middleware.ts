@@ -1,33 +1,34 @@
 import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
-
-interface JwtPayload {
-  sub: string;
-  roles: string[];
-}
+import { env } from "../config/env";
 
 export function requireAuth(req: Request, res: Response, next: NextFunction) {
-  const header = req.headers.authorization;
-
-  if (!header || !header.startsWith("Bearer ")) {
-    return res.status(401).json({ message: "🚨 Unauthorized attempt!" });
-  }
-
-  const token = header.split(" ")[1];
-
   try {
-    const payload = jwt.verify(token, process.env.JWT_SECRET!) as JwtPayload;
+    const header = req.headers.authorization;
 
-    req.user = {
-      id: payload.sub,
-      roles: payload.roles,
+    if (!header || !header.startsWith("Bearer ")) {
+      return res.status(401).json({
+        success: false,
+        message:
+          "Sorry unauthorized cause you probably have no token or whatever",
+      });
+    }
+
+    const token = header.split(" ")[1];
+
+    const payload = jwt.verify(token, env.JWT_SECRET) as {
+      sub: string;
+      roles?: string[];
     };
 
-    next();
-  } catch (e: any) {
-    return res
-      .status(401)
-      .json({ message: " Token might be invalid or expred. Sorry." });
+    // attach user context
+    (req as any).user = payload;
+
+    return next();
+  } catch (err) {
+    return res.status(401).json({
+      success: false,
+      message: "Unauthorized",
+    });
   }
-  next();
 }

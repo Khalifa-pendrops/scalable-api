@@ -5,15 +5,11 @@ import { Request, Response, NextFunction } from "express";
 
 const authService = new AuthService();
 
-console.log("🎯 Register Reach!");
-
 export class AuthController {
   static async register(req: Request, res: Response, next: NextFunction) {
-    console.log("🎯 Register hit");
     try {
       const { email, username, password } = req.body;
 
-      // ❌ you were passing positional args
       const user = await authService.register({
         email,
         username,
@@ -42,7 +38,6 @@ export class AuthController {
         userAgent: req.headers["user-agent"],
       });
 
-      // ❌ res.status(...) instead of res.json(...)
       return res.status(201).json({
         success: true,
         data: tokens,
@@ -81,11 +76,22 @@ export class AuthController {
 
   static async logoutAll(req: Request, res: Response, next: NextFunction) {
     try {
-      const userId = req.user!.id;
+      const userId = (req as any).user?.sub;
+
+      if (!userId) {
+        return res.status(401).json({
+          success: false,
+          message: "Sorry! unauthorized",
+        });
+      }
+
       await authService.logoutAll(userId);
 
-      return res.status(200).json({ success: true });
-    } catch (e: any) {
+      return res.json({
+        success: true,
+        message: "Logged out on all devices!",
+      });
+    } catch (e) {
       return next(e);
     }
   }

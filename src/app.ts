@@ -5,10 +5,6 @@ import authRoutes from "./modules/auth/auth.routes";
 
 const app = express();
 
-app.use((req, _res, next) => {
-  console.log(`${req.method} ${req.url}`);
-  next();
-});
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
