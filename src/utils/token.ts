@@ -1,6 +1,7 @@
 // store only hash
 // plain token is returned once
-// refresh token must be random, unpredictable, and not JWTs
+// refresh token must be random, unpredictable, and not JWTs 
+// used crypto cause it is faster than bcrypt
 
 import crypto from "crypto";
 

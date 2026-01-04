@@ -8,6 +8,7 @@ import { signAccessToken } from "../../utils/jwt";
 import { RefreshTokenRepo } from "./auth.refreshToken.repository";
 import { AuthError } from "../../error/auth.error";
 
+
 export class AuthService {
   constructor(
     private repo = new AuthRepo(),
@@ -124,6 +125,10 @@ export class AuthService {
       ip: meta.ip,
       userAgent: meta.userAgent,
     });
+
+    console.warn(
+      `[SECURITY] Refresh token reuse detected for user ${stored.userId}`
+    );
 
     return { accessToken, refreshToken: newRefreshToken };
   }

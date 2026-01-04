@@ -19,7 +19,7 @@ export class RefreshTokenRepo {
 
   async revoke(tokenId: string) {
     return RefreshTokenModel.updateOne(
-      { _id: tokenId, revokedAt: null }, // prevents re-revoking
+      { _id: tokenId, revokedAt: null }, // prevents re-revoking 
       { revokedAt: new Date() }
     );
   }

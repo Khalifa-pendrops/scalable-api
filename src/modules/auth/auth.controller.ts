@@ -2,6 +2,7 @@
 
 import { AuthService } from "./auth.service";
 import { Request, Response, NextFunction } from "express";
+import { logger } from "../../infrastructure/logger";
 
 const authService = new AuthService();
 
@@ -32,6 +33,8 @@ export class AuthController {
   static async login(req: Request, res: Response, next: NextFunction) {
     try {
       const { identifier, password } = req.body;
+
+      logger.info({ identifier }, "User logged in");
 
       const tokens = await authService.login(identifier, password, {
         ip: req.ip,
@@ -77,6 +80,8 @@ export class AuthController {
   static async logoutAll(req: Request, res: Response, next: NextFunction) {
     try {
       const userId = (req as any).user?.sub;
+
+      logger.info({ userId }, "User logged in");
 
       if (!userId) {
         return res.status(401).json({

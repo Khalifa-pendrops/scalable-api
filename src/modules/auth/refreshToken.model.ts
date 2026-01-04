@@ -26,7 +26,7 @@ const RefreshTokenSchema = new Schema(
   },
   // updatedAt will be false to avoid accidental writes.
   // revocation has to be explicit
-  { timestamps: { createdAt: true, updatedAt: false } }
+  { timestamps: { createdAt: true, updatedAt: false } } 
 );
 
 export const RefreshTokenModel = model("RefreshToken", RefreshTokenSchema);
