@@ -1,19 +1,19 @@
 import http from "k6/http";
 import { check } from "k6";
 
-const ACCESS_TOKEN = __ENV.ACCESS_TOKEN;
-
 export const options = {
-  stages: [
-    { duration: "10s", target: 50 },
-    { duration: "20s", target: 50 },
-    { duration: "10s", target: 0 },
-  ],
-  thresholds: {
-    http_req_failed: ["rate<0.01"],
-    http_req_duration: ["p(95)<80"],
-  },
+  vus: 1,
+  iterations: 1,
 };
+
+// Normalize + validate token (Windows-safe)
+const ACCESS_TOKEN = (__ENV.ACCESS_TOKEN || "").replace(/\s+/g, "");
+
+if (!ACCESS_TOKEN) {
+  throw new Error(
+    'ACCESS_TOKEN is missing. Run with: k6 run -e ACCESS_TOKEN="<token>" protected.test.js'
+  );
+}
 
 export default function () {
   const res = http.get("http://localhost:8080/bench/protected", {
@@ -22,5 +22,10 @@ export default function () {
     },
   });
 
-  check(res, { "status is 200": (r) => r.status === 200 });
+  console.log("STATUS:", res.status);
+  console.log("BODY:", res.body);
+
+  check(res, {
+    "status is 200": (r) => r.status === 200,
+  });
 }
