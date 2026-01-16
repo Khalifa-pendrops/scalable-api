@@ -18,7 +18,7 @@ export class AuthService {
   async register(params: {
     email: string;
     username: string;
-    password: string;
+    password: string; 
   }) {
     const { email, username } = params;
 

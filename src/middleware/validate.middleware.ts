@@ -4,11 +4,14 @@ import { Request, Response, NextFunction } from "express";
 export const validate =
   (schema: ZodObject) => (req: Request, res: Response, next: NextFunction) => {
     try {
-      schema.parse(req.body);
-    } catch (e: any) {
+      req.body = schema.parse(req.body); // zod example
+      return next();
+    } catch (err: any) {
+      console.error("VALIDATION_ERROR:", err);
       return res.status(400).json({
         success: false,
-        message: e.erros?.[0].message || "This request is invalid",
+        message: "Validation error",
+        errors: err?.errors ?? err?.message ?? err,
       });
     }
     next();

@@ -25,14 +25,25 @@ export class AuthController {
           username: user.username,
         },
       });
-    } catch (e) {
-      next(e);
+    } catch (e: any) {
+      // inside AuthController.register catch
+      console.error("REGISTER_ERROR:", e);
+
+      if (e?.code === 11000) {
+        return res
+          .status(409)
+          .json({ success: false, message: "Email already exists" });
+      }
+
+      return next(e);
     }
   }
 
   static async login(req: Request, res: Response, next: NextFunction) {
     try {
-      const { identifier, password } = req.body;
+      // const { identifier, password } = req.body;
+      const identifier = req.body.identifier ?? req.body.email;
+      const { password } = req.body;
 
       logger.info({ identifier }, "User logged in");
 

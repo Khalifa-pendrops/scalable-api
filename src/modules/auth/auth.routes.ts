@@ -19,7 +19,7 @@ router.get("/health", (_req, res) => {
   });
 });
 
-router.post("/register", validate(registerSchema), AuthController.register);
+router.post("/register", validate(registerSchema), AuthController.register); 
 
 router.post(
   "/login",
