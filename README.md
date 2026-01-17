@@ -50,3 +50,134 @@ screenshots/
 
 ---
 
+## 🌍 API Base URL
+
+```
+https://your-render-deployment-url.onrender.com
+
+```
+
+## 📖 API Documentation
+
+Below are examples of key endpoints.
+
+### Health Check
+
+- **GET /health**
+
+```
+Response
+
+{
+  "status": "ok"
+}
+
+```
+
+
+**GET /api/items**
+
+```
+Response
+
+{
+  "data": []
+}
+```
+
+**GET /api/items**
+
+```
+Response
+
+{
+  "data": []
+}
+```
+
+**GET /api/items**
+
+```
+Response
+
+{
+  "data": []
+}
+```
+
+---
+
+## ⚙️ Environment Variables
+
+Create a .env file in the root directory:
+
+```
+PORT=5000
+NODE_ENV=development
+DATABASE_URL=mongodb+srv://<user>:<password>@<cluster>/<db>
+
+# Authentication (remove if not used)
+JWT_SECRET=your_jwt_secret
+JWT_EXPIRES_IN=7d
+
+```
+
+A .env.example file is included in the repository with placeholder values.
+
+---
+
+## 🧪 Running Locally
+
+### 1) Clone the repository
+```
+git clone https://github.com/your-username/your-repo-name.git
+cd your-repo-name
+```
+
+### 2) Install dependencies 
+```
+npm install
+```
+
+### 3) Start the development server
+```
+npm run dev
+```
+
+### The server will run on:
+
+```
+http://localhost:5000
+```
+
+---
+
+## 🧪 Tests
+
+This project includes automated tests to ensure API correctness and stability.
+
+### Testing Stack
+
+### Test Runner: Jest
+
+TypeScript Support: ts-jest
+
+HTTP Assertions: Supertest
+
+Test Coverage
+
+API endpoints
+
+Request validation
+
+Error handling
+
+Authentication flows (where applicable)
+
+Running Tests
+npm test
+
+
+Tests are configured to run independently of the production database.
+A separate test database or mocked database layer is recommended.
+
